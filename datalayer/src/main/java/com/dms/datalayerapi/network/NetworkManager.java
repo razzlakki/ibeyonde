@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.dms.datalayerapi.network.event.ClientUpdateListener;
 import com.dms.datalayerapi.network.exception.NetworkManagerException;
+import com.dms.phoenix.util.Logger;
 import com.google.gson.Gson;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.MediaType;
@@ -174,6 +175,7 @@ public abstract class NetworkManager {
             try {
                 response = clientProperties.getClient().newCall(request).execute();
             } catch (IOException e) {
+                Logger.e(e);
                 updateException(NetworkManagerException.Type.IO_EXCEPTION, e);
             }
             try {

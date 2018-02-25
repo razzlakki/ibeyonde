@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 
 import com.dms.datalayerapi.network.Http;
 import com.dms.datalayerapi.util.GetUrlMaker;
@@ -28,10 +29,11 @@ public class LoginActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
-//                doLogin(((EditText) findViewById(R.id.username)).getText().toString(), ((EditText) findViewById(R.id.password)).getText().toString());
+                doLogin(((EditText) findViewById(R.id.username)).getText().toString(), ((EditText
+                        ) findViewById(R.id.password)).getText().toString());
 
-                startActivity(new Intent(LoginActivity.this, Dashboard.class));
-                finish();
+//                startActivity(new Intent(LoginActivity.this, Dashboard.class));
+//                finish();
             }
         });
 
