@@ -7,9 +7,12 @@ public class AppConstants {
 
 
     public static final String REPLACER = "%--Re--%";
-    public static String BASE_URL = "http://" + REPLACER + "app.ibeyonde.com/api/iot.php?view=";
+    public static String BASE_URL = "https://" + REPLACER + "app.ibeyonde.com/api/iot.php?view=";
     public static final String LOGIN = BASE_URL + "login";
+    public static final String REGISTER = BASE_URL + "register";
     public static String GET_DEVICE_LIST = BASE_URL + "devicelist";
+    public static String LIVE_VIEW = BASE_URL + "live";
+    public static String LATEST_ALERTS = BASE_URL + "lastalerts";
     public static String HOLIDAY_URL = BASE_URL + "Calender/HOLIDAYS.jsp";
     public static String GET_SIBLING = BASE_URL + "Login/siblings.jsp";
     public static String GET_GALLERY = BASE_URL + "Calender/GALLERY.jsp";

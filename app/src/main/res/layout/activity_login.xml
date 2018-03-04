@@ -50,7 +50,10 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="20dp"
                 android:drawableRight="@drawable/ic_person"
-                android:hint="Enter username" />
+                android:hint="Enter username"
+                android:text="demo"
+                android:imeOptions="actionNext"
+                android:singleLine="true" />
 
 
             <TextView
@@ -65,7 +68,11 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="20dp"
                 android:drawableRight="@drawable/password"
-                android:hint="******" />
+                android:hint="******"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:text="demo123"
+                android:singleLine="true" />
 
 
             <Button
@@ -76,6 +83,7 @@
                 android:background="@drawable/rec_gradient_fb"
                 android:text="Login"
                 android:textAllCaps="false"
+                android:imeOptions="actionGo"
                 android:textColor="#FFF" />
 
 
@@ -101,7 +109,8 @@
                 android:text="Forgot Password"
                 android:textAllCaps="false"
                 android:textColor="#bd2632"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:visibility="gone" />
 
 
         </LinearLayout>

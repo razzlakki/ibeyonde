@@ -129,7 +129,7 @@ public abstract class NetworkManager {
             if (result != null) {
                 SharedPreferences.Editor editor = sharedPrefrence.edit();
                 editor.putString(url, result);
-                editor.commit();
+                editor.apply();
             }
             return result;
         } else {
@@ -140,7 +140,7 @@ public abstract class NetworkManager {
                     if (result != null) {
                         SharedPreferences.Editor editor = sharedPrefrence.edit();
                         editor.putString(url, result);
-                        editor.commit();
+                        editor.apply();
                     }
                 }
             }).start();
@@ -158,6 +158,7 @@ public abstract class NetworkManager {
 
     private String doBaseCall(String url, String body, Http type) {
         String stringResponse = null;
+        headers = getDefaultHeaders(headers);
         try {
             Request.Builder absRequest = new Request.Builder()
                     .url(url);

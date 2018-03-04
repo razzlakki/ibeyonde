@@ -98,14 +98,14 @@ public class SharedUtil {
                 Log.e("SharedUtil:Exception", "key value " + key + " Not supported value with store", new Exception("key value " + key + " Not supported value with store"));
             }
         }
-        editor.commit();
+        editor.apply();
     }
 
 
     public void store(String key, boolean value) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
 
 

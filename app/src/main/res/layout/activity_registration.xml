@@ -59,6 +59,7 @@
                 android:text="User's email" />
 
             <EditText
+                android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:drawablePadding="20dp"
@@ -72,8 +73,10 @@
                 android:text="Password" />
 
             <EditText
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPassword"
                 android:drawablePadding="20dp"
                 android:drawableRight="@drawable/ic_person"
                 android:hint="******" />
@@ -85,13 +88,16 @@
                 android:text="Repeat Password" />
 
             <EditText
+                android:id="@+id/re_password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPassword"
                 android:drawablePadding="20dp"
                 android:drawableRight="@drawable/ic_person"
                 android:hint="******" />
 
             <Button
+                android:id="@+id/registerBtn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"

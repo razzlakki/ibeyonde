@@ -13,6 +13,8 @@ import com.dms.datalayerapi.network.NetworkManager;
 import com.dms.datalayerapi.network.event.NetworkConErrorListener;
 import com.dms.datalayerapi.network.exception.NetworkManagerException;
 import com.dms.datalayerapi.util.ConnectionUtil;
+import com.google.gson.Gson;
+import com.squareup.okhttp.Credentials;
 
 /**
  * Created by Raja.p on 23-05-2016.
@@ -37,8 +39,8 @@ public class HttpClientManager extends NetworkManager {
 
     @Override
     public HttpHeaderMaker getDefaultHeaders(HttpHeaderMaker headers) {
-        String basicAuth = "Basic " + new String(Base64.encode((getUserName() + ":" + getPassword()).getBytes(), Base64.NO_WRAP));
-        headers.addHeader("Authorization", basicAuth);
+        if (username != null)
+            headers.addHeader("Authorization", Credentials.basic(username.trim(), password.trim()));
         return headers;
     }
 
@@ -156,5 +158,10 @@ public class HttpClientManager extends NetworkManager {
         protected Result manipulateMoreOnBackGround(Result classType) {
             return classType;
         }
+    }
+
+
+    public Gson getGson() {
+        return gson;
     }
 }
