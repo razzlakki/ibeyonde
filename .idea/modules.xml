@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Ibeyonde.iml" filepath="$PROJECT_DIR$/Ibeyonde.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/datalayer/datalayer.iml" filepath="$PROJECT_DIR$/datalayer/datalayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mjpeglib/mjpeglib.iml" filepath="$PROJECT_DIR$/mjpeglib/mjpeglib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mjpegviewer_v1.0.4/mjpegviewer_v1.0.4.iml" filepath="$PROJECT_DIR$/mjpegviewer_v1.0.4/mjpegviewer_v1.0.4.iml" />
+      <module fileurl="file://$PROJECT_DIR$/rrcalender/rrcalender.iml" filepath="$PROJECT_DIR$/rrcalender/rrcalender.iml" />
+    </modules>
+  </component>
+</project>

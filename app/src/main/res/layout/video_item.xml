@@ -44,10 +44,17 @@
 
                 <FrameLayout
                     android:id="@+id/video_item"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:visibility="gone">
+
+                    <com.devbrackets.android.exomedia.ui.widget.VideoView
+                        android:id="@+id/mpeg_player"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </FrameLayout>
 
 
                 <TextView

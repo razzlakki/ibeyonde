@@ -44,6 +44,15 @@
         <activity
             android:name=".HistoryActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".HistorActivity"
+            android:label="@string/title_activity_histor"
+            android:parentActivityName=".Dashboard"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.technorabit.ibeyonde.Dashboard" />
+        </activity>
     </application>
 
 </manifest>

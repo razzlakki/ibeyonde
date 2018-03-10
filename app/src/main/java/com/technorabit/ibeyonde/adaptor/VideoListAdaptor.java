@@ -2,63 +2,37 @@ package com.technorabit.ibeyonde.adaptor;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.VideoView;
 
-import com.brightcove.player.event.Event;
-import com.brightcove.player.event.EventEmitter;
-import com.brightcove.player.event.EventListener;
-import com.brightcove.player.event.EventType;
-import com.brightcove.player.model.Video;
-import com.brightcove.player.view.BrightcoveExoPlayerVideoView;
-import com.brightcove.player.view.BrightcoveVideoView;
 import com.bumptech.glide.Glide;
+import com.devbrackets.android.exomedia.listener.OnPreparedListener;
+import com.devbrackets.android.exomedia.ui.widget.VideoView;
 import com.dms.datalayerapi.network.Http;
 import com.dms.datalayerapi.util.CommonPoolExecutor;
 import com.dms.datalayerapi.util.GetUrlMaker;
-import com.technorabit.ibeyonde.Dashboard;
-import com.technorabit.ibeyonde.LoginActivity;
+import com.halilibo.bettervideoplayer.BetterVideoPlayer;
+import com.technorabit.ibeyonde.HistorActivity;
 import com.technorabit.ibeyonde.R;
 import com.technorabit.ibeyonde.connection.HttpClientManager;
 import com.technorabit.ibeyonde.constants.AppConstants;
-import com.technorabit.ibeyonde.costom.VideoEnabledWebChromeClient;
-import com.technorabit.ibeyonde.costom.VideoEnabledWebView;
 import com.technorabit.ibeyonde.fragment.TabFragment;
-import com.technorabit.ibeyonde.fragment.dailog.BaseFragmentDialog;
-import com.technorabit.ibeyonde.model.LoginRes;
 import com.technorabit.ibeyonde.model.VideoItem;
 import com.technorabit.ibeyonde.util.SharedUtil;
-import com.technorabit.ibeyonde.util.Util;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
 
 /**
  * Created by raja on 18/02/18.
@@ -96,7 +70,7 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
         holder.history.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                context.startActivity(new Intent(context, HistorActivity.class));
             }
         });
         if (type == TabFragment.Type.LIVE) {
@@ -221,12 +195,14 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
             protected void onPostExecute(final String liveUrl) {
                 super.onPostExecute(liveUrl);
                 if (liveUrl != null) {
-                    holder.videoView.setVisibility(View.VISIBLE);
+                    holder.video_view.setVisibility(View.VISIBLE);
                     try {
-                        holder.videoView.loadUrl(URLEncoder.encode(liveUrl,"UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
+                        holder.video_view.setVideoURI(Uri.parse(liveUrl.replace("https", "http")));
+//                        holder.video_view.start();
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
+
 //                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(liveUrl));
 //                    context.startActivity(browserIntent);
                 } else {
@@ -242,12 +218,12 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
     }
 
     class VideoViewHolder extends RecyclerView.ViewHolder {
-        private final VideoEnabledWebChromeClient webChromeClient;
-        public VideoEnabledWebView videoView;
+        public VideoView video_view;
         public TextView history;
         public ImageView img_item;
         public TextView device_name;
         public FrameLayout video_item;
+
 
         public VideoViewHolder(View itemView) {
             super(itemView);
@@ -255,33 +231,14 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
             img_item = itemView.findViewById(R.id.img_item);
             history = itemView.findViewById(R.id.history);
             video_item = itemView.findViewById(R.id.video_item);
-            videoView = new VideoEnabledWebView(context);
-            videoView.clearCache(true);
-            videoView.setWebChromeClient(new WebChromeClient());
-            videoView.setWebViewClient(new WebViewClient());
-            WebSettings set = videoView.getSettings();
-            set.setAllowFileAccess(true);
-            set.setAllowFileAccessFromFileURLs(true);
-            set.setAllowUniversalAccessFromFileURLs(true);
-            set.setJavaScriptEnabled(true);
-            set.setBuiltInZoomControls(true);
-            webChromeClient = new VideoEnabledWebChromeClient() // See all available constructors...
-            {
+            video_view = itemView.findViewById(R.id.mpeg_player);
+            video_view.setOnPreparedListener(new OnPreparedListener() {
                 @Override
-                public void onProgressChanged(WebView view, int progress)
-                {
-                    // Your code...
-                }
-            };
-            webChromeClient.setOnToggledFullscreen(new VideoEnabledWebChromeClient.ToggledFullscreenCallback() {
-                @Override
-                public void toggledFullscreen(boolean fullscreen) {
-
+                public void onPrepared() {
+                    video_view.start();
                 }
             });
-            videoView.setWebChromeClient(webChromeClient);
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-            video_item.addView(videoView, params);
+            video_view.
         }
     }
 
