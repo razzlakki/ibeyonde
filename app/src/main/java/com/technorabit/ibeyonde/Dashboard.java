@@ -1,5 +1,6 @@
 package com.technorabit.ibeyonde;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -20,6 +21,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.dms.datalayerapi.network.Http;
+import com.dms.datalayerapi.util.CommonPoolExecutor;
 import com.dms.datalayerapi.util.GetUrlMaker;
 import com.technorabit.ibeyonde.adaptor.TabViewPagerAdapter;
 import com.technorabit.ibeyonde.connection.HttpClientManager;
@@ -64,15 +66,24 @@ public class Dashboard extends BaseActivity
         navigationView.setNavigationItemSelectedListener(this);
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        CommonPoolExecutor.get().clean();
+        if (adapter != null)
+            adapter.notifyDataSetChanged();
+    }
+
     private void initGUI() {
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        setupViewPager(viewPager);
+        viewPager = findViewById(R.id.viewpager);
+        setupViewPager();
         ((CheckBox) findViewById(R.id.checkBox)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (adapter != null) {
                     for (int i = 0; i < adapter.getCount(); i++) {
-                        ((TabFragment)adapter.getItem(i)).updateGrid(isChecked);
+                        ((TabFragment) adapter.getItem(i)).updateGrid(isChecked);
                     }
                 }
             }
@@ -81,10 +92,19 @@ public class Dashboard extends BaseActivity
         tabLayout.setupWithViewPager(viewPager);
     }
 
-    private void setupViewPager(ViewPager viewPager) {
+    private void setupViewPager() {
+        updateView();
+    }
+
+    private void updateView() {
         adapter = new TabViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(TabFragment.getInstance(TabFragment.Type.MOTION), "Motion");
-        adapter.addFragment(TabFragment.getInstance(TabFragment.Type.LIVE), "Live");
+        if (!(SharedUtil.get(this).hasKey("DefaultView")) || SharedUtil.get(this).getString("DefaultView").equalsIgnoreCase("Motion")) {
+            adapter.addFragment(TabFragment.getInstance(TabFragment.Type.MOTION), "Motion");
+            adapter.addFragment(TabFragment.getInstance(TabFragment.Type.LIVE), "Live");
+        } else {
+            adapter.addFragment(TabFragment.getInstance(TabFragment.Type.LIVE), "Live");
+            adapter.addFragment(TabFragment.getInstance(TabFragment.Type.MOTION), "Motion");
+        }
         viewPager.setAdapter(adapter);
     }
 
@@ -104,19 +124,9 @@ public class Dashboard extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-//        if (id == R.id.nav_motion) {
-//            // Handle the camera action
-//        } else if (id == R.id.nav_live) {
-//
-//        } else
-//        if (id == R.id.nav_alerts) {
-//
-//        } else if (id == R.id.nav_events) {
-//
-//        } else
         if (id == R.id.nav_settings) {
-
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivityForResult(intent, 101);
         } else if (id == R.id.nav_logout) {
 
         }
@@ -124,5 +134,22 @@ public class Dashboard extends BaseActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        finish();
+        startActivity(new Intent(this, Dashboard.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (adapter != null) {
+            for (int i = 0; i < adapter.getCount(); i++) {
+                ((TabFragment) adapter.getItem(i)).isDestroyed();
+            }
+        }
     }
 }

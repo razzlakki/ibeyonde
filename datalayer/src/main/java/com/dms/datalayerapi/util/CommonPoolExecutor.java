@@ -48,4 +48,10 @@ public class CommonPoolExecutor {
     public boolean isEmpty() {
         return mDecodeThreadPool.getPoolSize() == 0;
     }
+
+    public CommonPoolExecutor clean() {
+        instance = new CommonPoolExecutor();
+        return instance;
+
+    }
 }

@@ -16,6 +16,7 @@
 
         <com.technorabit.ibeyonde.costom.SquareFrameLayout
             android:layout_width="match_parent"
+            android:id="@+id/root_square_layout"
             android:layout_height="match_parent">
 
             <LinearLayout
@@ -35,7 +36,7 @@
                     android:typeface="sans" />
 
 
-                <ImageView
+                <android.support.v4.view.ViewPager
                     android:id="@+id/img_item"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
@@ -49,27 +50,13 @@
                     android:layout_weight="1"
                     android:visibility="gone">
 
-                    <com.devbrackets.android.exomedia.ui.widget.VideoView
+                    <yjkim.mjpegviewer.MjpegView
                         android:id="@+id/mpeg_player"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" />
 
                 </FrameLayout>
 
-
-                <TextView
-                    android:id="@+id/history"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginTop="5dp"
-                    android:background="@drawable/history_bg"
-                    android:gravity="center"
-                    android:padding="5dp"
-                    android:text="@string/history"
-                    android:textColor="#000000" />
 
             </LinearLayout>
         </com.technorabit.ibeyonde.costom.SquareFrameLayout>

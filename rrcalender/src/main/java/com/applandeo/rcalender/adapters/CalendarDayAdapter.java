@@ -20,6 +20,7 @@ import com.applandeo.rcalender.utils.DateUtils;
 import com.applandeo.rcalender.utils.DayColorsUtils;
 import com.applandeo.rcalender.utils.SelectedDay;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,6 +46,8 @@ class CalendarDayAdapter extends ArrayAdapter<Date> {
     private int mSelectionColor;
     private EventClickLister eventClickListenr;
     private OnSelectDateListener onSelectDateListener;
+    private Calendar selectedDate;
+    private View previousDayView;
 
     CalendarDayAdapter(CalendarPageAdapter calendarPageAdapter, Context context, int itemLayoutResource,
                        ArrayList<Date> dates, List<EventDay> eventDays, int month, boolean isDatePicker,
@@ -69,7 +72,7 @@ class CalendarDayAdapter extends ArrayAdapter<Date> {
             view = mLayoutInflater.inflate(mItemLayoutResource, parent, false);
         }
 
-        TextView dayLabel = (TextView) view.findViewById(R.id.dayLabel);
+        final TextView dayLabel = (TextView) view.findViewById(R.id.dayLabel);
         LinearLayout dayIcon = (LinearLayout) view.findViewById(R.id.event_layout);
 
         final Calendar day = new GregorianCalendar();
@@ -80,15 +83,23 @@ class CalendarDayAdapter extends ArrayAdapter<Date> {
             loadIcon(dayIcon, day, view);
         }
 
+        if (selectedDate != null && getDateFromCal(selectedDate).equalsIgnoreCase(getDateFromCal(day)))
+            updateDateView(view);
+        else {
+            dayLabel.setBackgroundResource(R.drawable.background_transparent);
+        }
+
+
         if (mIsDatePicker && day.equals(mCalendarPageAdapter.getSelectedDate())
                 && day.get(Calendar.MONTH) == mMonth) {
-            // Setting selected day color
             mCalendarPageAdapter.setSelectedDay(new SelectedDay(dayLabel, day));
             DayColorsUtils.setSelectedDayColors(mContext, dayLabel, mSelectionColor);
+            updateDateView(dayLabel);
 
         } else {
             if (day.get(Calendar.MONTH) == mMonth) { // Setting current month day color
                 DayColorsUtils.setCurrentMonthDayColors(mContext, day, mToday, dayLabel, mTodayLabelColor);
+
             } else { // Setting not current month day color
                 DayColorsUtils.setDayColors(dayLabel, ContextCompat.getColor(mContext,
                         R.color.nextMonthDayColor), Typeface.NORMAL, R.drawable.background_transparent);
@@ -100,12 +111,27 @@ class CalendarDayAdapter extends ArrayAdapter<Date> {
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(onSelectDateListener != null)
+                if (onSelectDateListener != null) {
+                    if (previousDayView != null)
+                        previousDayView.setBackgroundResource(R.drawable.background_transparent);
                     onSelectDateListener.onSelect(day);
+                    selectedDate = day;
+                    updateDateView(dayLabel);
+                    previousDayView = dayLabel;
+                }
             }
         });
 
         return view;
+    }
+
+    private String getDateFromCal(Calendar calendar) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+        return dateFormat.format(calendar.getTime());
+    }
+
+    private void updateDateView(View view) {
+        view.setBackgroundResource(R.drawable.background_color_circle_selector);
     }
 
     private void loadIcon(final LinearLayout dayIcon, final Calendar day, View view) {
@@ -146,6 +172,6 @@ class CalendarDayAdapter extends ArrayAdapter<Date> {
     }
 
     public void setOnSelectDateListener(OnSelectDateListener onSelectDateListener) {
-        this.onSelectDateListener  = onSelectDateListener;
+        this.onSelectDateListener = onSelectDateListener;
     }
 }

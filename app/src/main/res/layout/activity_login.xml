@@ -51,7 +51,6 @@
                 android:drawablePadding="20dp"
                 android:drawableRight="@drawable/ic_person"
                 android:hint="Enter username"
-                android:text="demo"
                 android:imeOptions="actionNext"
                 android:singleLine="true" />
 
@@ -71,7 +70,6 @@
                 android:hint="******"
                 android:imeOptions="actionNext"
                 android:inputType="textPassword"
-                android:text="demo123"
                 android:singleLine="true" />
 
 

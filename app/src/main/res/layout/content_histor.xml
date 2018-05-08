@@ -4,26 +4,42 @@
     android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="?attr/actionBarSize">
 
 
-    <com.applandeo.rcalender.CalendarView
+    <com.dms.collapsiblecalendarview.widget.CollapsibleCalendar
         android:id="@+id/calendarView"
         android:layout_width="match_parent"
-        android:layout_height="360dp"
+        android:layout_height="wrap_content"
         android:background="#ffffff"
-        app:headerColor="@color/colorPrimary" />
+        app:buttonLeft_drawableTintColor="@android:color/white"
+        app:buttonRight_drawableTintColor="@android:color/white"
+        app:expandIconColor="@android:color/white"
+        app:primaryColor="@color/colorPrimary"
+        app:selectedItem_background="@drawable/circle_white_solid_background"
+        app:selectedItem_textColor="@color/colorPrimary"
+        app:textColor="@android:color/white"
+        app:todayItem_background="@drawable/circle_white_stroke_background"
+        app:todayItem_textColor="@android:color/white" />
 
     <com.technorabit.ibeyonde.costom.SquareFrameLayout
         android:id="@+id/events_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <VideoView
+        <ImageView
             android:id="@+id/history_video_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent"
+            android:minHeight="250dp" />
+
+        <ProgressBar
+            android:id="@+id/progresss_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center" />
+
 
     </com.technorabit.ibeyonde.costom.SquareFrameLayout>
 

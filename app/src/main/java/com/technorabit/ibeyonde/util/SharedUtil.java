@@ -54,7 +54,7 @@ public class SharedUtil {
             Log.e("SharedUtil:Exception", "key value " + key + " Not supported", new Exception("key value " + key + " Not supported value with store"));
             return;
         }
-        editor.commit();
+        editor.apply();
     }
 
 
@@ -158,4 +158,7 @@ public class SharedUtil {
         return sharedPreferences.getFloat(key, defaultValue);
     }
 
+    public boolean hasKey(String keyName) {
+        return sharedPreferences.contains(keyName);
+    }
 }

@@ -66,10 +66,6 @@ public class TabFragment extends Fragment {
     }
 
 
-    public TabFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -154,4 +150,9 @@ public class TabFragment extends Fragment {
         this.type = Type.getType(getArguments().getInt("type"));
     }
 
+
+    public void isDestroyed(){
+        if(videoListAdaptor != null)
+        videoListAdaptor.setDestroyed(true);
+    }
 }

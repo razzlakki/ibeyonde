@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.devbrackets.android.exomedia.listener.OnPreparedListener;
 import com.devbrackets.android.exomedia.ui.widget.VideoView;
 import com.dms.datalayerapi.network.Http;
@@ -22,17 +24,22 @@ import com.dms.datalayerapi.util.CommonPoolExecutor;
 import com.dms.datalayerapi.util.GetUrlMaker;
 import com.halilibo.bettervideoplayer.BetterVideoPlayer;
 import com.technorabit.ibeyonde.HistorActivity;
+import com.technorabit.ibeyonde.LiveViewActivity;
 import com.technorabit.ibeyonde.R;
+import com.technorabit.ibeyonde.anim.BackgroundToForegroundTransformer;
 import com.technorabit.ibeyonde.connection.HttpClientManager;
 import com.technorabit.ibeyonde.constants.AppConstants;
 import com.technorabit.ibeyonde.fragment.TabFragment;
 import com.technorabit.ibeyonde.model.VideoItem;
+import com.technorabit.ibeyonde.util.AutoRotateUtil;
 import com.technorabit.ibeyonde.util.SharedUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+
+import yjkim.mjpegviewer.MjpegView;
 
 /**
  * Created by raja on 18/02/18.
@@ -44,6 +51,7 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
     private Context context;
     private TabFragment.Type type;
     private ArrayList<VideoItem> videoItems = new ArrayList<>();
+    private boolean destroyed = false;
 
     public VideoListAdaptor(Context context, TabFragment.Type type) {
         this.type = type;
@@ -65,29 +73,39 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
 
     @Override
     public void onBindViewHolder(VideoViewHolder holder, int position) {
-        VideoItem videoItem = videoItems.get(position);
+        final VideoItem videoItem = videoItems.get(position);
         holder.device_name.setText(videoItem.uuid + ":" + videoItem.device_name);
-        holder.history.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                context.startActivity(new Intent(context, HistorActivity.class));
-            }
-        });
         if (type == TabFragment.Type.LIVE) {
             initLiveCall(videoItem, holder);
-            holder.history.setVisibility(View.GONE);
-            holder.img_item.setVisibility(View.GONE);
+            holder.img_items.setVisibility(View.GONE);
             holder.video_item.setVisibility(View.VISIBLE);
+            holder.video_view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, LiveViewActivity.class);
+                    intent.putExtra("udid", videoItem.uuid);
+                    context.startActivity(intent);
+                }
+            });
+            holder.root_square_layout.setOnClickListener(null);
         } else {
-            initMotionCall(videoItem, holder.img_item);
-            holder.history.setVisibility(View.VISIBLE);
-            holder.img_item.setVisibility(View.VISIBLE);
+            initMotionCall(videoItem, holder.img_items);
+            holder.img_items.setVisibility(View.VISIBLE);
             holder.video_item.setVisibility(View.GONE);
+            holder.root_square_layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, HistorActivity.class);
+                    intent.putExtra("udid", videoItem.uuid);
+                    context.startActivity(intent);
+                }
+            });
+            holder.video_view.setOnClickListener(null);
         }
 
     }
 
-    private void initMotionCall(VideoItem videoItem, final ImageView img_item) {
+    private void initMotionCall(VideoItem videoItem, final ViewPager img_item) {
         GetUrlMaker getUrlMaker = GetUrlMaker.getMaker();
         HttpClientManager client = HttpClientManager.get(context);
         client.setUsername(SharedUtil.get(context).getString("username"));
@@ -109,41 +127,37 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getUrlMaker.getPathForGetUrl(url));
     }
 
-    private void loadToImageView(final String liveUrl, final ImageView img_item) {
+    private void loadToImageView(final String liveUrl, final ViewPager img_item) {
         try {
             final JSONArray jsonArray = new JSONArray(liveUrl);
-            CommonPoolExecutor.get().startDownload(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        Message msg = new Message();
-                        try {
-                            msg.obj = new ViewHolder(img_item, jsonArray.getJSONArray(i).getString(0));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        handler.sendMessage(msg);
-                        try {
-                            Thread.sleep(i * 1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
+            ArrayList<String> ImagesArray = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                ImagesArray.add(jsonArray.getJSONArray(i).getString(0));
+            }
+            new AutoRotateUtil(img_item);
+            img_item.setAdapter(new BunchImageAdapter(context, ImagesArray));
+            img_item.setPageTransformer(true, new BackgroundToForegroundTransformer());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    public boolean isDestroyed() {
+        return destroyed;
+    }
+
+    public void setDestroyed(boolean destroyed) {
+        this.destroyed = destroyed;
+    }
+
 
     class ViewHolder {
-        public ViewHolder(ImageView imageView, String url) {
+        public ViewHolder(ViewPager imageView, String url) {
             this.imageView = imageView;
             this.url = url;
         }
 
-        public ImageView imageView;
+        public ViewPager imageView;
         public String url;
     }
 
@@ -151,8 +165,12 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
         @Override
         public void handleMessage(Message msg) {
             ViewHolder img_item = (ViewHolder) msg.obj;
-            Glide.with(context).load(img_item.url).into(img_item.imageView);
-            super.handleMessage(msg);
+            if (!destroyed && img_item.imageView != null) {
+                RequestOptions requestOptions = new RequestOptions();
+                requestOptions.placeholder(R.drawable.placeholder);
+                requestOptions.error(R.drawable.error);
+//                Glide.with(context).setDefaultRequestOptions(requestOptions).load(img_item.url).thumbnail(0.8f).into(img_item.imageView);
+            }
         }
     };
 
@@ -197,7 +215,7 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
                 if (liveUrl != null) {
                     holder.video_view.setVisibility(View.VISIBLE);
                     try {
-                        holder.video_view.setVideoURI(Uri.parse(liveUrl.replace("https", "http")));
+                        holder.video_view.Start(liveUrl);
 //                        holder.video_view.start();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -218,27 +236,20 @@ public class VideoListAdaptor extends RecyclerView.Adapter<VideoListAdaptor.Vide
     }
 
     class VideoViewHolder extends RecyclerView.ViewHolder {
-        public VideoView video_view;
-        public TextView history;
-        public ImageView img_item;
+        public MjpegView video_view;
+        public ViewPager img_items;
         public TextView device_name;
         public FrameLayout video_item;
+        public View root_square_layout;
 
 
         public VideoViewHolder(View itemView) {
             super(itemView);
+            root_square_layout = itemView.findViewById(R.id.root_square_layout);
             device_name = itemView.findViewById(R.id.device_name);
-            img_item = itemView.findViewById(R.id.img_item);
-            history = itemView.findViewById(R.id.history);
+            img_items = itemView.findViewById(R.id.img_item);
             video_item = itemView.findViewById(R.id.video_item);
             video_view = itemView.findViewById(R.id.mpeg_player);
-            video_view.setOnPreparedListener(new OnPreparedListener() {
-                @Override
-                public void onPrepared() {
-                    video_view.start();
-                }
-            });
-            video_view.
         }
     }
 
